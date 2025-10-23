@@ -28,6 +28,10 @@ public class Usuario {
         this.password = password;
     }
 
+    public int getId() {
+        return id;
+    }
+
     public String getNome() {
         return nome;
     }
