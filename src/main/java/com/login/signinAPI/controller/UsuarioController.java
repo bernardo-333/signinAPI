@@ -66,5 +66,22 @@ public class UsuarioController {
         return ResponseEntity.ok(findId);
     }
 
+    @PutMapping(value = "atualizar/{id}")
+    public ResponseEntity<?> updateUser(@PathVariable int id, @RequestBody Usuario user) {
+        Usuario findUpdate = usuarioRepository.findById(id);
+    if (findUpdate == null) {
+        return ResponseEntity.ok("Usuario nao encontrado");
+    } else {
+        findUpdate.setNome(user.getNome());
+        findUpdate.setEmail(user.getEmail());
+        usuarioRepository.save(findUpdate);
+        return ResponseEntity.ok("Usuario atualizado com sucesso");
+    }
 
-}
+
+
+    }
+
+
+
+    }
