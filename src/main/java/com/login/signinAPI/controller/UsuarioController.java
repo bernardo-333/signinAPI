@@ -8,8 +8,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
+@RequestMapping("/users")
 @CrossOrigin(origins = "*")
 public class UsuarioController {
 
@@ -18,16 +20,16 @@ public class UsuarioController {
     UsuarioRepository usuarioRepository;
 
     // Cadastrar usuarios
-    @PostMapping(value = "usuario/cadastro")
+    @PostMapping
     public ResponseEntity<?> saveUser(@RequestBody Usuario user){
         Usuario usuario = new Usuario(user.getNome(), user.getEmail(), user.getPassword());
         usuarioRepository.save(usuario);
-        return ResponseEntity.ok("Cadastrado com sucesso");
+        return ResponseEntity.ok(usuario);
     }
 
     // Login com email e senha
-    @PostMapping(value = "login")
-    public ResponseEntity<?> findUser(@RequestBody Usuario user){
+    @PostMapping("/{email}")
+    public ResponseEntity<?> findUser(@PathVariable Usuario user){
         Usuario findUser = usuarioRepository.findByEmail(user.getEmail());
         if (findUser == null) {
             return ResponseEntity.ok("Logado com sucesso");
@@ -41,32 +43,33 @@ public class UsuarioController {
     }
 
     // Listar todos os usuarios
-    @GetMapping(value ="listar")
+    @GetMapping
     public ResponseEntity<?> listUsers(){
         List<Usuario> usuarios = usuarioRepository.findAll();
         return ResponseEntity.ok(usuarios);
     }
 
     // Deletar Usuario
-    @DeleteMapping(value = "deletar/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable int id){
-        Usuario findDelete = usuarioRepository.findById(id);
-        if (findDelete == null) {
-            return ResponseEntity.ok("Usuario nao encontrado");
-        } else {
+        Optional<Usuario> findDelete = usuarioRepository.findById(id);
+        if (findDelete.isPresent()) {
             usuarioRepository.delete(findDelete);
+
+        } else {
+
             return ResponseEntity.status(HttpStatus.ACCEPTED).body("Usuario deletado com sucesso");
         }
     }
 
     // Procurar pelo ID
-    @GetMapping(value = "procurar/{id}")
+    @GetMapping("procurar/{id}")
     public ResponseEntity<?> searchUser(@PathVariable int id){
         Usuario findId = usuarioRepository.findById(id);
         return ResponseEntity.ok(findId);
     }
 
-    @PutMapping(value = "atualizar/{id}")
+    @PutMapping("atualizar/{id}")
     public ResponseEntity<?> updateUser(@PathVariable int id, @RequestBody Usuario user) {
         Usuario findUpdate = usuarioRepository.findById(id);
     if (findUpdate == null) {

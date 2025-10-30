@@ -28,19 +28,19 @@ public class ProdutoController {
     }
 
     // Login com email e senha
-//    @PostMapping(value = "login")
-//    public ResponseEntity<?> findUser(@RequestBody Usuario user){
-//        Usuario findUser = usuarioRepository.findByEmail(user.getEmail());
-//        if (findUser == null) {
-//            return ResponseEntity.ok("Logado com sucesso");
-//        } else {
-//            if (findUser.getPassword().equals(user.getPassword())) {
-//                return ResponseEntity.ok("Logado com sucesso");
-//            } else {
-//                return ResponseEntity.ok("Senha está incorreta");
-//            }
-//        }
-//    }
+    @PostMapping(value = "login")
+    public ResponseEntity<?> findUser(@RequestBody Usuario user){
+        Usuario findUser = usuarioRepository.findByEmail(user.getEmail());
+        if (findUser == null) {
+            return ResponseEntity.ok("Logado com sucesso");
+        } else {
+            if (findUser.getPassword().equals(user.getPassword())) {
+                return ResponseEntity.ok("Logado com sucesso");
+            } else {
+                return ResponseEntity.ok("Senha está incorreta");
+            }
+        }
+    }
 
     // Listar todos os usuarios
 //    @GetMapping(value ="listar")
