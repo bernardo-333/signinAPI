@@ -28,8 +28,8 @@ public class UsuarioController {
     }
 
     // Login com email e senha
-    @PostMapping("/{email}")
-    public ResponseEntity<?> findUser(@PathVariable Usuario user){
+    @PostMapping("/login")
+    public ResponseEntity<?> findUser(@RequestBody Usuario user){
         Usuario findUser = usuarioRepository.findByEmail(user.getEmail());
         if (findUser == null) {
             return ResponseEntity.ok("Logado com sucesso");
@@ -52,37 +52,33 @@ public class UsuarioController {
     // Deletar Usuario
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable int id){
-        Optional<Usuario> findDelete = usuarioRepository.findById(id);
-        if (findDelete.isPresent()) {
-            usuarioRepository.delete(findDelete);
-
+        if (!usuarioRepository.existsById(id)) {
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Usuario nao encontrado");
         } else {
-
+            usuarioRepository.deleteById(id);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body("Usuario deletado com sucesso");
         }
     }
 
     // Procurar pelo ID
-    @GetMapping("procurar/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<?> searchUser(@PathVariable int id){
-        Usuario findId = usuarioRepository.findById(id);
-        return ResponseEntity.ok(findId);
+        Optional<Usuario> usuario = usuarioRepository.findById(id);
+        return ResponseEntity.ok(usuario);
     }
 
-    @PutMapping("atualizar/{id}")
+    // Atualizar o usur
+    @PutMapping("/{id}")
     public ResponseEntity<?> updateUser(@PathVariable int id, @RequestBody Usuario user) {
-        Usuario findUpdate = usuarioRepository.findById(id);
-    if (findUpdate == null) {
-        return ResponseEntity.ok("Usuario nao encontrado");
-    } else {
-        findUpdate.setNome(user.getNome());
-        findUpdate.setEmail(user.getEmail());
-        usuarioRepository.save(findUpdate);
-        return ResponseEntity.ok("Usuario atualizado com sucesso");
-    }
 
-
-
+        if (!usuarioRepository.existsById(id)) {
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Usuario nao encontrado");
+        } else {
+            Usuario updateUser = usuarioRepository.findById(id).get();
+            updateUser.setNome(user.getNome());
+            updateUser.setEmail(user.getEmail());
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Usuario deletado com sucesso");
+        }
     }
 
 
