@@ -1,10 +1,13 @@
 package com.login.signinAPI.controller;
 
+import com.login.signinAPI.dto.UsuarioRequestDTO;
 import com.login.signinAPI.entity.Usuario;
 import com.login.signinAPI.repository.UsuarioRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,7 +24,7 @@ public class UsuarioController {
 
     // Cadastrar usuarios
     @PostMapping
-    public ResponseEntity<?> saveUser(@RequestBody Usuario user){
+    public ResponseEntity<?> saveUser(@Valid @RequestBody UsuarioRequestDTO user){
         Usuario usuario = new Usuario(user.getNome(), user.getEmail(), user.getPassword());
         usuarioRepository.save(usuario);
         return ResponseEntity.ok(usuario);
