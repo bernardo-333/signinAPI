@@ -53,7 +53,7 @@ public class UsuarioController {
     public ResponseEntity<?> listUsers(){
         List<Usuario> usuarios = usuarioRepository.findAll();
         List<UsuarioResponseDTO> usuariosDTO = usuarios.stream()
-                .map(usuario -> new UsuarioResponseDTO(usuario.getNome(), usuario.getEmail()))
+                .map(usuario -> new UsuarioResponseDTO(usuario))
                 .toList();
         return ResponseEntity.ok(usuariosDTO);
     }
@@ -86,23 +86,24 @@ public class UsuarioController {
     @GetMapping("/{id}")
     public ResponseEntity<?> searchUser(@PathVariable int id){
         Optional<Usuario> usuario = usuarioRepository.findById(id);
-        return ResponseEntity.ok(usuario);
+        if (usuario.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario não encontrado");
+        }
+        UsuarioResponseDTO usuarioResponseDTO = new UsuarioResponseDTO(usuario.get());
+        return ResponseEntity.ok(usuarioResponseDTO);
     }
 
     // Atualizar o usur
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable int id, @RequestBody Usuario user) {
-
+    public ResponseEntity<?> updateUser(@PathVariable int id, @RequestBody UsuarioRequestDTO user) {
         if (!usuarioRepository.existsById(id)) {
             return ResponseEntity.status(HttpStatus.ACCEPTED).body("Usuario nao encontrado");
         } else {
             Usuario updateUser = usuarioRepository.findById(id).get();
             updateUser.setNome(user.getNome());
             updateUser.setEmail(user.getEmail());
+            usuarioRepository.save(updateUser);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body("Usuario deletado com sucesso");
         }
     }
-
-
-
     }

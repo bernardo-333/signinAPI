@@ -1,16 +1,21 @@
 package com.login.signinAPI.dto;
 
+import com.login.signinAPI.entity.Usuario;
+
 public class UsuarioResponseDTO {
 
+    private int id;
     private String nome;
     private String email;
 
-    public UsuarioResponseDTO() {
+    public UsuarioResponseDTO(Usuario usuario) {
+        this.id = usuario.getId();
+        this.nome = usuario.getNome();
+        this.email = usuario.getEmail();
     }
 
-    public UsuarioResponseDTO(String nome, String email) {
-        this.nome = nome;
-        this.email = email;
+    public int getId() {
+        return id;
     }
 
     public String getNome() {
@@ -19,13 +24,5 @@ public class UsuarioResponseDTO {
 
     public String getEmail() {
         return email;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 }

@@ -1,23 +1,24 @@
 package com.login.signinAPI.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 public class ProdutoRequestDTO {
 
     @NotBlank(message = "O campo não pode ser vazio")
     private String nome;
 
-    @NotBlank(message = "O campo não pode ser vazio")
-    private String preco;
+    @NotNull(message = "O campo não pode ser vazio")
+    @Positive(message = "O preço deve ser maior que zero")
+    private double preco;
 
-    @Size(min = 1, max = 4, message = "A quantidade deve ter entre 1 a 4 caracteres")
-    private String quantidade;
+    @Min(value = 1, message = "A quantidade mínima é 1")
+    @Max(value = 1000, message = "A quantidade máxima é 1000")
+    private int quantidade;
 
     public ProdutoRequestDTO() {
     }
 
-    public ProdutoRequestDTO(String nome, String preco, String quantidade) {
+    public ProdutoRequestDTO(String nome, double preco, int quantidade) {
         this.nome = nome;
         this.preco = preco;
         this.quantidade = quantidade;
@@ -31,19 +32,19 @@ public class ProdutoRequestDTO {
         this.nome = nome;
     }
 
-    public String getPreco() {
+    public double getPreco() {
         return preco;
     }
 
-    public void setPreco(String preco) {
+    public void setPreco(double preco) {
         this.preco = preco;
     }
 
-    public String getQuantidade() {
+    public int getQuantidade() {
         return quantidade;
     }
 
-    public void setQuantidade(String quantidade) {
+    public void setQuantidade(int quantidade) {
         this.quantidade = quantidade;
     }
 }
