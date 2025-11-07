@@ -1,15 +1,16 @@
 package com.login.signinAPI.controller;
 
 import com.login.signinAPI.dto.UsuarioRequestDTO;
+import com.login.signinAPI.dto.UsuarioResponseDTO;
 import com.login.signinAPI.entity.Usuario;
 import com.login.signinAPI.repository.UsuarioRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,11 +47,29 @@ public class UsuarioController {
     }
 
     // Listar todos os usuarios
+
+    // Metodo novo com lambda
     @GetMapping
     public ResponseEntity<?> listUsers(){
         List<Usuario> usuarios = usuarioRepository.findAll();
-        return ResponseEntity.ok(usuarios);
+        List<UsuarioResponseDTO> usuariosDTO = usuarios.stream()
+                .map(usuario -> new UsuarioResponseDTO(usuario.getNome(), usuario.getEmail()))
+                .toList();
+        return ResponseEntity.ok(usuariosDTO);
     }
+
+//    Metodo antigo sem lambda
+//    @GetMapping
+//    public ResponseEntity<?> listUsers(){
+//        List<Usuario> usuarios = usuarioRepository.findAll();
+//        List<UsuarioResponseDTO> usuariosDTO = new ArrayList<>();
+//        for(Usuario u: usuarios) {
+//            UsuarioResponseDTO dto = new UsuarioResponseDTO(u.getNome(), u.getEmail());
+//            usuariosDTO.add(dto);
+//        }
+//        return ResponseEntity.ok(usuariosDTO);
+//    }
+
 
     // Deletar Usuario
     @DeleteMapping("/{id}")
