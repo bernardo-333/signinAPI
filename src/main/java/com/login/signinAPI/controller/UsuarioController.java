@@ -1,18 +1,12 @@
 package com.login.signinAPI.controller;
 
 import com.login.signinAPI.dto.UsuarioRequestDTO;
-import com.login.signinAPI.dto.UsuarioResponseDTO;
 import com.login.signinAPI.entity.Usuario;
-import com.login.signinAPI.repository.UsuarioRepository;
+import com.login.signinAPI.service.UsuarioService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -21,29 +15,18 @@ public class UsuarioController {
 
     // Injeção de dependencias
     @Autowired
-    UsuarioRepository usuarioRepository;
+    UsuarioService usuarioService;
 
     // Cadastrar usuarios
     @PostMapping
     public ResponseEntity<?> saveUser(@Valid @RequestBody UsuarioRequestDTO user){
-        Usuario usuario = new Usuario(user.getNome(), user.getEmail(), user.getPassword());
-        usuarioRepository.save(usuario);
-        return ResponseEntity.ok(usuario);
+        return ResponseEntity.ok(usuarioService.saveUser(user));
     }
 
     // Login com email e senha
     @PostMapping("/login")
     public ResponseEntity<?> findUser(@RequestBody Usuario user){
-        Usuario findUser = usuarioRepository.findByEmail(user.getEmail());
-        if (findUser == null) {
-            return ResponseEntity.ok("Logado com sucesso");
-        } else {
-            if (findUser.getPassword().equals(user.getPassword())) {
-                return ResponseEntity.ok("Logado com sucesso");
-            } else {
-                return ResponseEntity.ok("Senha está incorreta");
-            }
-        }
+        return ResponseEntity.ok(usuarioService.findUser(user));
     }
 
     // Listar todos os usuarios
@@ -51,11 +34,7 @@ public class UsuarioController {
     // Metodo novo com lambda
     @GetMapping
     public ResponseEntity<?> listUsers(){
-        List<Usuario> usuarios = usuarioRepository.findAll();
-        List<UsuarioResponseDTO> usuariosDTO = usuarios.stream()
-                .map(usuario -> new UsuarioResponseDTO(usuario))
-                .toList();
-        return ResponseEntity.ok(usuariosDTO);
+        return ResponseEntity.ok(usuarioService.listUsers());
     }
 
 //    Metodo antigo sem lambda
@@ -74,36 +53,20 @@ public class UsuarioController {
     // Deletar Usuario
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable int id){
-        if (!usuarioRepository.existsById(id)) {
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Usuario nao encontrado");
-        } else {
-            usuarioRepository.deleteById(id);
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Usuario deletado com sucesso");
-        }
+        return ResponseEntity.ok(usuarioService.deleteUser(id));
     }
 
     // Procurar pelo ID
     @GetMapping("/{id}")
     public ResponseEntity<?> searchUser(@PathVariable int id){
-        Optional<Usuario> usuario = usuarioRepository.findById(id);
-        if (usuario.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario não encontrado");
-        }
-        UsuarioResponseDTO usuarioResponseDTO = new UsuarioResponseDTO(usuario.get());
-        return ResponseEntity.ok(usuarioResponseDTO);
+        return ResponseEntity.ok(usuarioService.searchUser(id));
     }
 
     // Atualizar o usur
     @PutMapping("/{id}")
     public ResponseEntity<?> updateUser(@PathVariable int id, @RequestBody UsuarioRequestDTO user) {
-        if (!usuarioRepository.existsById(id)) {
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Usuario nao encontrado");
-        } else {
-            Usuario updateUser = usuarioRepository.findById(id).get();
-            updateUser.setNome(user.getNome());
-            updateUser.setEmail(user.getEmail());
-            usuarioRepository.save(updateUser);
-            return ResponseEntity.status(HttpStatus.ACCEPTED).body("Usuario deletado com sucesso");
-        }
+            return ResponseEntity.ok(usuarioService.updateUser(id, user));
     }
     }
+
+
